@@ -36,24 +36,35 @@ selected_experience = st.sidebar.multiselect("Выберите опыт", df[df[
 selected_city = st.sidebar.multiselect("Выберите город", df[df["type"] == "Город"]["target"].unique())
 selected_seeking = st.sidebar.multiselect("Выберите 'Ищу'", df[df["type"] == "Ищу"]["target"].unique())
 
-# Фильтруем данные по выбранным категориям
-filtered_df = df.copy()
-if selected_discipline:
-    filtered_df = filtered_df[filtered_df["target"].isin(selected_discipline)]
-if selected_role:
-    filtered_df = filtered_df[filtered_df["target"].isin(selected_role)]
-if selected_style:
-    filtered_df = filtered_df[filtered_df["target"].isin(selected_style)]
-if selected_instrument:
-    filtered_df = filtered_df[filtered_df["target"].isin(selected_instrument)]
-if selected_language:
-    filtered_df = filtered_df[filtered_df["target"].isin(selected_language)]
-if selected_experience:
-    filtered_df = filtered_df[filtered_df["target"].isin(selected_experience)]
-if selected_city:
-    filtered_df = filtered_df[filtered_df["target"].isin(selected_city)]
-if selected_seeking:
-    filtered_df = filtered_df[filtered_df["target"].isin(selected_seeking)]
+# Кнопка сброса фильтров
+if st.sidebar.button("Сбросить фильтры"):
+    selected_discipline = []
+    selected_role = []
+    selected_style = []
+    selected_instrument = []
+    selected_language = []
+    selected_experience = []
+    selected_city = []
+    selected_seeking = []
+
+# Находим всех художников (source), соответствующих хотя бы одному фильтру
+filtered_sources = set(df["source"])
+filters = [
+    selected_discipline, selected_role, selected_style, selected_instrument, 
+    selected_language, selected_experience, selected_city, selected_seeking
+]
+
+for selected in filters:
+    if selected:
+        matching_sources = set(df[df["target"].isin(selected)]["source"])
+        filtered_sources &= matching_sources  # Берем пересечение, чтобы оставить только подходящих
+
+# Если ни один фильтр не выбран, показываем всех художников
+if not any(filters):
+    filtered_sources = set(df["source"])
+
+# Отображаем все связи художников, которые остались после фильтрации
+filtered_df = df[df["source"].isin(filtered_sources)]
 
 # Создаём интерактивный граф с pyvis
 net = Network(height="700px", width="100%", bgcolor="#262123", font_color="white")
