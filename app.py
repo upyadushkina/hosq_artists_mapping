@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
+from pyvis.network import Network
 import networkx as nx
-import plotly.graph_objects as go
+import tempfile
 
 # Загружаем данные
 def load_data():
@@ -26,68 +27,49 @@ type_colors = {
 
 # Фильтры
 st.sidebar.header("🔍 Фильтры")
-selected_types = st.sidebar.multiselect("Выберите типы связей", df["type"].unique(), df["type"].unique())
+selected_discipline = st.sidebar.multiselect("Выберите дисциплину", df[df["type"] == "Дисциплина"]["target"].unique())
+selected_role = st.sidebar.multiselect("Выберите роль", df[df["type"] == "Роль"]["target"].unique())
+selected_style = st.sidebar.multiselect("Выберите стиль", df[df["type"] == "Стиль"]["target"].unique())
+selected_instrument = st.sidebar.multiselect("Выберите инструмент", df[df["type"] == "Инструмент"]["target"].unique())
+selected_language = st.sidebar.multiselect("Выберите язык общения", df[df["type"] == "Язык"]["target"].unique())
+selected_experience = st.sidebar.multiselect("Выберите опыт", df[df["type"] == "Опыт"]["target"].unique())
+selected_city = st.sidebar.multiselect("Выберите город", df[df["type"] == "Город"]["target"].unique())
+selected_seeking = st.sidebar.multiselect("Выберите 'Ищу'", df[df["type"] == "Ищу"]["target"].unique())
 
-# Фильтруем данные по выбранным типам
-df_filtered = df[df["type"].isin(selected_types)]
+# Фильтруем данные по выбранным категориям
+filtered_df = df.copy()
+if selected_discipline:
+    filtered_df = filtered_df[filtered_df["target"].isin(selected_discipline)]
+if selected_role:
+    filtered_df = filtered_df[filtered_df["target"].isin(selected_role)]
+if selected_style:
+    filtered_df = filtered_df[filtered_df["target"].isin(selected_style)]
+if selected_instrument:
+    filtered_df = filtered_df[filtered_df["target"].isin(selected_instrument)]
+if selected_language:
+    filtered_df = filtered_df[filtered_df["target"].isin(selected_language)]
+if selected_experience:
+    filtered_df = filtered_df[filtered_df["target"].isin(selected_experience)]
+if selected_city:
+    filtered_df = filtered_df[filtered_df["target"].isin(selected_city)]
+if selected_seeking:
+    filtered_df = filtered_df[filtered_df["target"].isin(selected_seeking)]
 
-# Создаём граф
-G = nx.Graph()
-for _, row in df_filtered.iterrows():
-    G.add_node(row["source"], group="source", color=source_color)
-    G.add_node(row["target"], group=row["type"], color=type_colors.get(row["type"], "#CD5373"))
-    G.add_edge(row["source"], row["target"])
+# Создаём интерактивный граф с pyvis
+net = Network(height="700px", width="100%", bgcolor="#262123", font_color="white")
 
-# Расположение узлов
-pos = nx.spring_layout(G, seed=42)
+# Добавляем узлы и связи
+for _, row in filtered_df.iterrows():
+    net.add_node(row["source"], label=row["source"], color=source_color, size=15)
+    net.add_node(row["target"], label=row["target"], color=type_colors.get(row["type"], "#CD5373"), size=10)
+    net.add_edge(row["source"], row["target"], color="#AAAAAA")
 
-# Создаём связи (рёбра)
-edge_x = []
-edge_y = []
-for edge in G.edges():
-    x0, y0 = pos[edge[0]]
-    x1, y1 = pos[edge[1]]
-    edge_x.extend([x0, x1, None])
-    edge_y.extend([y0, y1, None])
+# Включаем физику для анимации движения узлов
+net.toggle_physics(True)
 
-edge_trace = go.Scatter(
-    x=edge_x, y=edge_y,
-    line=dict(width=1, color="#888"),
-    hoverinfo='none',
-    mode='lines'
-)
+# Сохраняем граф во временный HTML-файл
+temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
+net.save_graph(temp_file.name)
 
-# Узлы (вершины)
-node_x = []
-node_y = []
-node_labels = []
-node_colors = []
-
-for node in G.nodes():
-    x, y = pos[node]
-    node_x.append(x)
-    node_y.append(y)
-    node_labels.append(str(node))
-    node_colors.append(G.nodes[node]["color"])
-
-node_trace = go.Scatter(
-    x=node_x, y=node_y,
-    mode='markers+text',
-    text=node_labels,
-    marker=dict(size=10, color=node_colors),
-    textposition="top center"
-)
-
-# Отображаем граф
-fig = go.Figure(data=[edge_trace, node_trace],
-                layout=go.Layout(
-                    title="Граф связей художников",
-                    showlegend=False,
-                    hovermode='closest',
-                    plot_bgcolor='#262123',
-                    paper_bgcolor='#262123',
-                    xaxis=dict(showgrid=False, zeroline=False, visible=False),
-                    yaxis=dict(showgrid=False, zeroline=False, visible=False)
-                ))
-
-st.plotly_chart(fig)
+# Отображаем граф в Streamlit
+st.components.v1.html(open(temp_file.name, "r", encoding="utf-8").read(), height=700)
