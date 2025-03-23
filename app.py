@@ -141,23 +141,36 @@ for _, row in filtered_df.iterrows():
 # --- JSON-совместимая строка для set_options ---
 options_dict = {
     "edges": {
-        "color": {
-            "color": EDGE_COLOR,
-            "highlight": EDGE_HIGHLIGHT_COLOR,
-            "opacity": EDGE_OPACITY
-        },
-        "width": 1,
-        "selectionWidth": 3
+          "color": {
+                "color": EDGE_COLOR,                         # основной цвет связи
+                "highlight": EDGE_HIGHLIGHT_COLOR,           # цвет связи при наведении/выборе
+                "inherit": False,                            # наследовать цвет от узла (True/False)
+                "opacity": EDGE_OPACITY                      # прозрачность (0.0 – 1.0)
+          },
+          "width": 0.5,                                      # толщина линии
+          "selectionWidth": 3,                               # толщина при выделении
+          "hoverWidth": 1.5,                                 # толщина при наведении
+          "smooth": {
+                "enabled": True,
+                "type": "dynamic"                            # стиль: 'continuous', 'curvedCCW', 'discrete', ...
+          }
     },
     "interaction": {
         "hover": True,
-        "navigationButtons": False,
-        "tooltipDelay": 100,
-        "selectConnectedEdges": True
+        "multiselect": True,              # удерживать Ctrl для выбора нескольких
+        "selectable": True,               # позволяет выбирать узлы
+        "selectConnectedEdges": True,     # выделять связи выбранных узлов
+        "dragNodes": True,
+        "dragView": True,
+        "zoomView": True,
+        "navigationButtons": False,        # стрелки + zoom справа
+        "tooltipDelay": 100
     },
     "nodes": {
+        "shape": "dot",
         "font": {
             "color": GRAPH_LABEL_COLOR,
+            "face": "arial",
             "size": 0
         },
         "opacity": 1
@@ -165,6 +178,18 @@ options_dict = {
     "manipulation": False,
     "physics": {
         "enabled": True
+    },
+    "layout": {
+        "randomSeed": 42,                  # делает граф стабильным между перезагрузками
+        "improvedLayout": True,
+        "hierarchical": {
+            "enabled": False,
+            "levelSeparation": 150,
+            "nodeSpacing": 100,
+            "treeSpacing": 200,
+            "direction": "UD",               # LR, RL, DU
+            "sortMethod": "hubsize"
+        }
     }
 }
 
