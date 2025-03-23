@@ -247,3 +247,12 @@ with open(temp_file.name, "w", encoding="utf-8") as f:
     f.write(html_content)
 
 st.components.v1.html(open(temp_file.name, "r", encoding="utf-8").read(), height=int(GRAPH_HEIGHT.replace("px", ""))).read(), height=int(GRAPH_HEIGHT.replace("px", "")))
+
+import os
+
+if os.path.exists(temp_file.name):
+    with open(temp_file.name, "r", encoding="utf-8") as f:
+        html_code = f.read()
+    st.components.v1.html(html_code, height=int(GRAPH_HEIGHT.replace("px", "")))
+else:
+    st.error("Graph file was not created.")).read(), height=int(GRAPH_HEIGHT.replace("px", "")))
