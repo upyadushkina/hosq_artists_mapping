@@ -151,7 +151,7 @@ options_dict = {
     },
     "interaction": {
         "hover": True,
-        "navigationButtons": True,
+        "navigationButtons": False,
         "tooltipDelay": 100,
         "selectConnectedEdges": True
     },
