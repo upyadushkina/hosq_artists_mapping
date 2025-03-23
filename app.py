@@ -82,7 +82,7 @@ selected_instrument = st.sidebar.multiselect("Choose tools", df[df["type"] == "�
 selected_language = st.sidebar.multiselect("Choose languages of communication", df[df["type"] == "Язык"]["target"].unique())
 selected_experience = st.sidebar.multiselect("Choose experiences", df[df["type"] == "Опыт"]["target"].unique())
 selected_city = st.sidebar.multiselect("Choose cities", df[df["type"] == "Город"]["target"].unique())
-selected_seeking = st.sidebar.multiselect("Choose "what are you looking for"", df[df["type"] == "Ищу"]["target"].unique())
+selected_seeking = st.sidebar.multiselect("Choose 'what are you looking for'", df[df["type"] == "Ищу"]["target"].unique())
 
 # Кнопка сброса фильтров
 if st.sidebar.button("Clean filters"):
