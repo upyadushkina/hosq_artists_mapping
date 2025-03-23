@@ -24,7 +24,7 @@ EDGE_HIGHLIGHT_COLOR = "#6A50FF"        # цвет связей при наве�
 EDGE_HIGHLIGHT_OPACITY = 1.0           # прозрачность активных связей
 
 GRAPH_WIDTH = "100%"                   # ширина окна графа
-GRAPH_HEIGHT = "800px"                 # высота окна графа
+GRAPH_HEIGHT = "700px"                 # высота окна графа
 GRAPH_MARGIN_TOP = "100px"             # отступ сверху для графа
 
 SOURCE_NODE_COLOR = "#4C4646"           # цвет узлов-художников
@@ -50,7 +50,7 @@ if logo_path:
         logo_data = base64.b64encode(f.read()).decode()
     st.markdown(
         f"""
-        <div style="position: absolute; top: 15px; right: 25px;">
+        <div style="position: absolute; top: 5px; right: 10px;">
             <img src="data:image/png;base64,{logo_data}" width="33">
         </div>
         """,
@@ -146,10 +146,10 @@ if not any(sel for sel, _ in filters):
 filtered_df = df[df["source"].isin(filtered_sources)]
 
 # --- Создаём интерактивный граф с pyvis ---
-net = Network(height=GRAPH_HEIGHT, width=GRAPH_WIDTH, bgcolor=PAGE_BG_COLOR, font_color=PAGE_TEXT_COLOR)
+net = Network(height=GRAPH_HEIGHT, width=GRAPH_WIDTH, bgcolor=PAGE_BG_COLOR, font_color=GRAPH_LABEL_COLOR)
 
 for _, row in filtered_df.iterrows():
-    net.add_node(row["source"], label=row["source"], color=SOURCE_NODE_COLOR, size=15)
+    net.add_node(row["source"], label=None, title=row["source"], color=SOURCE_NODE_COLOR, size=15)
     net.add_node(row["target"], label=None, title=row["target"], color=TYPE_COLORS.get(row["type"], "#CD5373"), size=10)
     net.add_edge(row["source"], row["target"], color=EDGE_COLOR)
 
@@ -165,7 +165,7 @@ options_dict = {
     },
     "interaction": {
         "hover": True,
-        "navigationButtons": False,
+        "navigationButtons": True,
         "tooltipDelay": 100
     },
     "nodes": {
