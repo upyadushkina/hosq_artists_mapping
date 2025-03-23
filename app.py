@@ -146,19 +146,23 @@ options_dict = {
             "highlight": EDGE_HIGHLIGHT_COLOR,
             "opacity": EDGE_OPACITY
         },
-        "width": 1
+        "width": 1,
+        "selectionWidth": 3
     },
     "interaction": {
         "hover": True,
-        "navigationButtons": False,
-        "tooltipDelay": 100
+        "navigationButtons": True,
+        "tooltipDelay": 100,
+        "selectConnectedEdges": True
     },
     "nodes": {
         "font": {
             "color": GRAPH_LABEL_COLOR,
             "size": 0
-        }
+        },
+        "opacity": 1
     },
+    "manipulation": False,
     "physics": {
         "enabled": True
     }
