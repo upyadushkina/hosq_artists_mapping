@@ -171,7 +171,6 @@ options_dict = {
         "font": {
             "color": GRAPH_LABEL_COLOR,
             "face": "inter",
-            "size": 3
         },
         "opacity": 1
     },
