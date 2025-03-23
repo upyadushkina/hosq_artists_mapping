@@ -3,27 +3,51 @@ import pandas as pd
 from pyvis.network import Network
 import networkx as nx
 import tempfile
+import base64
 
 # --- Стилизация страницы ---
 st.set_page_config(page_title="Граф художников", layout="wide")
+
+# ЛОГОТИП в правом верхнем углу
+logo_path = "logo.png"
+if logo_path:
+    with open(logo_path, "rb") as f:
+        logo_data = base64.b64encode(f.read()).decode()
+    st.markdown(
+        f"""
+        <div style="position: absolute; top: 15px; right: 25px;">
+            <img src="data:image/png;base64,{logo_data}" width="100">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+# Стилизация CSS
 st.markdown("""
     <style>
     body {
         background-color: #262123;
+        color: #E8DED3;
     }
-    .stSidebar {
-        background-color: #4C4646;
-    }
-    .stMultiSelect>div>div {
+    .stApp {
         background-color: #262123;
         color: #E8DED3;
+    }
+    .stSidebar {
+        background-color: #4C4646 !important;
+        color: #E8DED3 !important;
+    }
+    .css-1v3fvcr, .css-1cpxqw2, .css-1d391kg, .css-1n76uvr {
+        background-color: #4C4646 !important;
+        color: #E8DED3 !important;
+    }
+    .stMultiSelect>div>div {
+        background-color: #262123 !important;
+        color: #E8DED3 !important;
     }
     .stMultiSelect [data-baseweb="tag"] {
         background-color: #6A50FF !important;
         color: #262123 !important;
-    }
-    .stSelectbox, .stMultiSelect {
-        color: #E8DED3;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -50,18 +74,18 @@ type_colors = {
 }
 
 # --- Боковая панель с фильтрами ---
-st.sidebar.header("🔍 Фильтры")
-selected_discipline = st.sidebar.multiselect("Выберите дисциплину", df[df["type"] == "Дисциплина"]["target"].unique())
-selected_role = st.sidebar.multiselect("Выберите роль", df[df["type"] == "Роль"]["target"].unique())
-selected_style = st.sidebar.multiselect("Выберите стиль", df[df["type"] == "Стиль"]["target"].unique())
-selected_instrument = st.sidebar.multiselect("Выберите инструмент", df[df["type"] == "Инструмент"]["target"].unique())
-selected_language = st.sidebar.multiselect("Выберите язык общения", df[df["type"] == "Язык"]["target"].unique())
-selected_experience = st.sidebar.multiselect("Выберите опыт", df[df["type"] == "Опыт"]["target"].unique())
-selected_city = st.sidebar.multiselect("Выберите город", df[df["type"] == "Город"]["target"].unique())
-selected_seeking = st.sidebar.multiselect("Выберите 'Ищу'", df[df["type"] == "Ищу"]["target"].unique())
+st.sidebar.header("Filters")
+selected_discipline = st.sidebar.multiselect("Choose disciplines", df[df["type"] == "Дисциплина"]["target"].unique())
+selected_role = st.sidebar.multiselect("Choose roles", df[df["type"] == "Роль"]["target"].unique())
+selected_style = st.sidebar.multiselect("Choose styles", df[df["type"] == "Стиль"]["target"].unique())
+selected_instrument = st.sidebar.multiselect("Choose tools", df[df["type"] == "Инструмент"]["target"].unique())
+selected_language = st.sidebar.multiselect("Choose languages of communication", df[df["type"] == "Язык"]["target"].unique())
+selected_experience = st.sidebar.multiselect("Choose experiences", df[df["type"] == "Опыт"]["target"].unique())
+selected_city = st.sidebar.multiselect("Choose cities", df[df["type"] == "Город"]["target"].unique())
+selected_seeking = st.sidebar.multiselect("Choose "what are you looking for"", df[df["type"] == "Ищу"]["target"].unique())
 
 # Кнопка сброса фильтров
-if st.sidebar.button("Сбросить фильтры"):
+if st.sidebar.button("Clean filters"):
     selected_discipline = []
     selected_role = []
     selected_style = []
@@ -99,9 +123,11 @@ filtered_df = df[df["source"].isin(filtered_sources)]
 # --- Создаём интерактивный граф с pyvis ---
 net = Network(height="1000px", width="100%", bgcolor="#262123", font_color="white")
 
+# Добавляем узлы и связи
 for _, row in filtered_df.iterrows():
+    show_label = row["source"] if row["source"] == row["source"] else None
     net.add_node(row["source"], label=row["source"], color=source_color, size=15)
-    net.add_node(row["target"], label=row["target"], color=type_colors.get(row["type"], "#CD5373"), size=10)
+    net.add_node(row["target"], label=None, title=row["target"], color=type_colors.get(row["type"], "#CD5373"), size=10)
     net.add_edge(row["source"], row["target"], color="#AAAAAA")
 
 net.toggle_physics(True)
