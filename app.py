@@ -24,7 +24,7 @@ EDGE_HIGHLIGHT_COLOR = "#6A50FF"        # цвет связей при наве�
 EDGE_HIGHLIGHT_OPACITY = 1.0           # прозрачность активных связей
 
 GRAPH_WIDTH = "100%"                   # ширина окна графа
-GRAPH_HEIGHT = "400px"                 # высота окна графа
+GRAPH_HEIGHT = "800px"                 # высота окна графа
 GRAPH_MARGIN_TOP = "100px"             # отступ сверху для графа
 
 SOURCE_NODE_COLOR = "#4C4646"           # цвет узлов-художников
@@ -146,7 +146,7 @@ if not any(sel for sel, _ in filters):
 filtered_df = df[df["source"].isin(filtered_sources)]
 
 # --- Создаём интерактивный граф с pyvis ---
-net = Network(height=GRAPH_HEIGHT, width=GRAPH_WIDTH, bgcolor="#E8DED3", font_color="#262123")
+net = Network(height=GRAPH_HEIGHT, width=GRAPH_WIDTH, bgcolor=PAGE_BG_COLOR, font_color=PAGE_TEXT_COLOR)
 
 for _, row in filtered_df.iterrows():
     net.add_node(row["source"], label=row["source"], color=SOURCE_NODE_COLOR, size=15)
