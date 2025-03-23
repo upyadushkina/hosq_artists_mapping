@@ -50,7 +50,7 @@ if logo_path:
         logo_data = base64.b64encode(f.read()).decode()
     st.markdown(
         f"""
-        <div style="position: absolute; top: 5px; right: 10px;">
+        <div style="position: absolute; top: 0px; right: 10px;">
             <img src="data:image/png;base64,{logo_data}" width="33">
         </div>
         """,
@@ -165,7 +165,7 @@ options_dict = {
     },
     "interaction": {
         "hover": True,
-        "navigationButtons": True,
+        "navigationButtons": False,
         "tooltipDelay": 100
     },
     "nodes": {
