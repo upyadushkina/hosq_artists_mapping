@@ -4,29 +4,30 @@ from pyvis.network import Network
 import networkx as nx
 import tempfile
 import base64
+import json
 
 # --- Цветовая схема и параметры ---
-PAGE_BG_COLOR = "#262123"
-PAGE_TEXT_COLOR = "#E8DED3"
-SIDEBAR_BG_COLOR = "#262123"
-SIDEBAR_LABEL_COLOR = "#E8DED3"
-SIDEBAR_TAG_TEXT_COLOR = "#262123"
-SIDEBAR_TAG_BG_COLOR = "#6A50FF"
-BUTTON_BG_COLOR = "#262123"
-BUTTON_TEXT_COLOR = "#4C4646"
-GRAPH_LABEL_COLOR = "#E8DED3"
-HEADER_MENU_COLOR = "#262123"
+PAGE_BG_COLOR = "#262123"              # фон всей страницы
+PAGE_TEXT_COLOR = "#E8DED3"            # основной текст на странице
+SIDEBAR_BG_COLOR = "#262123"           # фон бокового меню
+SIDEBAR_LABEL_COLOR = "#E8DED3"        # подписи к фильтрам
+SIDEBAR_TAG_TEXT_COLOR = "#E8DED3"     # текст в выбранных тегах
+SIDEBAR_TAG_BG_COLOR = "#6A50FF"       # фон выбранного тега
+BUTTON_BG_COLOR = "#262123"            # фон кнопок
+BUTTON_TEXT_COLOR = "#4C4646"          # текст на кнопках
+GRAPH_LABEL_COLOR = "#E8DED3"          # цвет подписей узлов графа
+HEADER_MENU_COLOR = "#262123"          # цвет верхнего меню Streamlit
 
-EDGE_COLOR = "#4C4646"
-EDGE_OPACITY = 1.0
-EDGE_HIGHLIGHT_COLOR = "#6A50FF"
-EDGE_HIGHLIGHT_OPACITY = 1.0
+EDGE_COLOR = "#4C4646"                  # цвет всех связей
+EDGE_OPACITY = 1.0                      # прозрачность связей
+EDGE_HIGHLIGHT_COLOR = "#6A50FF"        # цвет связей при наведении
+EDGE_HIGHLIGHT_OPACITY = 1.0           # прозрачность активных связей
 
-GRAPH_WIDTH = "100%"
-GRAPH_HEIGHT = "400px"
-GRAPH_MARGIN_TOP = "100px"
+GRAPH_WIDTH = "100%"                   # ширина окна графа
+GRAPH_HEIGHT = "400px"                 # высота окна графа
+GRAPH_MARGIN_TOP = "100px"             # отступ сверху для графа
 
-SOURCE_NODE_COLOR = "#4C4646"
+SOURCE_NODE_COLOR = "#4C4646"           # цвет узлов-художников
 
 TYPE_COLORS = {
     "Дисциплина": "#6A50FF",
@@ -42,7 +43,7 @@ TYPE_COLORS = {
 }
 
 # --- Настройки страницы и логотип ---
-st.set_page_config(page_title="Граф художников", layout="wide")
+st.set_page_config(page_title="Artist Graph", layout="wide")
 logo_path = "logo.png"
 if logo_path:
     with open(logo_path, "rb") as f:
@@ -102,16 +103,16 @@ df = load_data()
 
 # --- Боковая панель с фильтрами ---
 st.sidebar.header("Filters")
-selected_discipline = st.sidebar.multiselect("Choose disciplines", df[df["type"] == "Дисциплина"]["target"].unique())
-selected_role = st.sidebar.multiselect("Choose roles", df[df["type"] == "Роль"]["target"].unique())
-selected_style = st.sidebar.multiselect("Choose styles", df[df["type"] == "Стиль"]["target"].unique())
-selected_instrument = st.sidebar.multiselect("Choose tools", df[df["type"] == "Инструмент"]["target"].unique())
-selected_language = st.sidebar.multiselect("Choose languages of communication", df[df["type"] == "Язык"]["target"].unique())
-selected_experience = st.sidebar.multiselect("Choose experiences", df[df["type"] == "Опыт"]["target"].unique())
-selected_city = st.sidebar.multiselect("Choose cities", df[df["type"] == "Город"]["target"].unique())
-selected_seeking = st.sidebar.multiselect("Choose 'what are you looking for'", df[df["type"] == "Ищу"]["target"].unique())
+selected_discipline = st.sidebar.multiselect("Choose disciplines", df[df["type"] == "Дисциплина"]["target"].dropna().unique())
+selected_role = st.sidebar.multiselect("Choose roles", df[df["type"] == "Роль"]["target"].dropna().unique())
+selected_style = st.sidebar.multiselect("Choose styles", df[df["type"] == "Стиль"]["target"].dropna().unique())
+selected_instrument = st.sidebar.multiselect("Choose tools", df[df["type"] == "Инструмент"]["target"].dropna().unique())
+selected_language = st.sidebar.multiselect("Choose communication languages", df[df["type"] == "Язык"]["target"].dropna().unique())
+selected_experience = st.sidebar.multiselect("Choose experience", df[df["type"] == "Опыт"]["target"].dropna().unique())
+selected_city = st.sidebar.multiselect("Choose cities", df[df["type"] == "Город"]["target"].dropna().unique())
+selected_seeking = st.sidebar.multiselect("Choose 'Seeking'", df[df["type"] == "Ищу"]["target"].dropna().unique())
 
-if st.sidebar.button("Сlean filters"):
+if st.sidebar.button("Clear filters"):
     selected_discipline = []
     selected_role = []
     selected_style = []
@@ -152,32 +153,32 @@ for _, row in filtered_df.iterrows():
     net.add_node(row["target"], label=None, title=row["target"], color=TYPE_COLORS.get(row["type"], "#CD5373"), size=10)
     net.add_edge(row["source"], row["target"], color=EDGE_COLOR)
 
-# Включаем физику и взаимодействие
-net.set_options("""
-var options = {
-  edges: {
-    color: {
-      color: '""" + EDGE_COLOR + """',
-      highlight: '""" + EDGE_HIGHLIGHT_COLOR + """',
-      opacity: """ + str(EDGE_OPACITY) + """
+# --- JSON-совместимая строка для set_options ---
+options_dict = {
+    "edges": {
+        "color": {
+            "color": EDGE_COLOR,
+            "highlight": EDGE_HIGHLIGHT_COLOR,
+            "opacity": EDGE_OPACITY
+        },
+        "width": 1
     },
-    width: 1
-  },
-  interaction: {
-    hover: true,
-    navigationButtons: true,
-    tooltipDelay: 100
-  },
-  nodes: {
-    font: {
-      color: '""" + GRAPH_LABEL_COLOR + """'
+    "interaction": {
+        "hover": True,
+        "navigationButtons": True,
+        "tooltipDelay": 100
+    },
+    "nodes": {
+        "font": {
+            "color": GRAPH_LABEL_COLOR
+        }
+    },
+    "physics": {
+        "enabled": True
     }
-  },
-  physics: {
-    enabled: true
-  }
 }
-""")
+
+net.set_options(json.dumps(options_dict))
 
 # --- Сохраняем и отображаем граф ---
 temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
