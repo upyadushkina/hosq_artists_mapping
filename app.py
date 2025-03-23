@@ -6,27 +6,27 @@ import tempfile
 import base64
 
 # --- Цветовая схема и параметры ---
-PAGE_BG_COLOR = "#262123"                # Фон всей страницы
-PAGE_TEXT_COLOR = "#E8DED3"              # Основной цвет текста
-SIDEBAR_BG_COLOR = "#4C4646"             # Фон бокового меню
-SIDEBAR_LABEL_COLOR = "#E8DED3"          # Цвет подписей боковой панели
-SIDEBAR_TAG_TEXT_COLOR = "#262123"       # Текст внутри выбранного тега
-SIDEBAR_TAG_BG_COLOR = "#6A50FF"         # Фон выбранного тега
-BUTTON_BG_COLOR = "#E8DED3"              # Цвет кнопок
-BUTTON_TEXT_COLOR = "#262123"            # Цвет текста на кнопках
-GRAPH_LABEL_COLOR = "#E8DED3"            # Цвет подписей узлов в графе
-HEADER_MENU_COLOR = "#262123"            # Цвет верхнего меню Streamlit
+PAGE_BG_COLOR = "#262123"
+PAGE_TEXT_COLOR = "#E8DED3"
+SIDEBAR_BG_COLOR = "#262123"
+SIDEBAR_LABEL_COLOR = "#E8DED3"
+SIDEBAR_TAG_TEXT_COLOR = "#262123"
+SIDEBAR_TAG_BG_COLOR = "#6A50FF"
+BUTTON_BG_COLOR = "#262123"
+BUTTON_TEXT_COLOR = "#4C4646"
+GRAPH_LABEL_COLOR = "#E8DED3"
+HEADER_MENU_COLOR = "#262123"
 
-EDGE_COLOR = "#4C4646"                   # Цвет связей (по умолчанию)
-EDGE_OPACITY = 1.0                       # Прозрачность линий
-EDGE_HIGHLIGHT_COLOR = "#6A50FF"         # Цвет связей при наведении
-EDGE_HIGHLIGHT_OPACITY = 1.0             # Прозрачность активной линии
+EDGE_COLOR = "#4C4646"
+EDGE_OPACITY = 1.0
+EDGE_HIGHLIGHT_COLOR = "#6A50FF"
+EDGE_HIGHLIGHT_OPACITY = 1.0
 
-GRAPH_WIDTH = "100%"                     # Ширина окна графа
-GRAPH_HEIGHT = "500px"                   # Высота окна графа
-GRAPH_MARGIN_TOP = "60px"                # Отступ сверху для окна графа
+GRAPH_WIDTH = "100%"
+GRAPH_HEIGHT = "400px"
+GRAPH_MARGIN_TOP = "100px"
 
-SOURCE_NODE_COLOR = "#4C4646"            # Цвет узлов-художников
+SOURCE_NODE_COLOR = "#4C4646"
 
 TYPE_COLORS = {
     "Дисциплина": "#6A50FF",
@@ -111,7 +111,7 @@ selected_experience = st.sidebar.multiselect("Choose experiences", df[df["type"]
 selected_city = st.sidebar.multiselect("Choose cities", df[df["type"] == "Город"]["target"].unique())
 selected_seeking = st.sidebar.multiselect("Choose 'what are you looking for'", df[df["type"] == "Ищу"]["target"].unique())
 
-if st.sidebar.button("Clean Filters"):
+if st.sidebar.button("Сlean filters"):
     selected_discipline = []
     selected_role = []
     selected_style = []
@@ -150,9 +150,34 @@ net = Network(height=GRAPH_HEIGHT, width=GRAPH_WIDTH, bgcolor=PAGE_BG_COLOR, fon
 for _, row in filtered_df.iterrows():
     net.add_node(row["source"], label=row["source"], color=SOURCE_NODE_COLOR, size=15)
     net.add_node(row["target"], label=None, title=row["target"], color=TYPE_COLORS.get(row["type"], "#CD5373"), size=10)
-    net.add_edge(row["source"], row["target"], color=EDGE_COLOR, opacity=EDGE_OPACITY)
+    net.add_edge(row["source"], row["target"], color=EDGE_COLOR)
 
-net.toggle_physics(True)
+# Включаем физику и взаимодействие
+net.set_options("""
+var options = {
+  edges: {
+    color: {
+      color: '""" + EDGE_COLOR + """',
+      highlight: '""" + EDGE_HIGHLIGHT_COLOR + """',
+      opacity: """ + str(EDGE_OPACITY) + """
+    },
+    width: 1
+  },
+  interaction: {
+    hover: true,
+    navigationButtons: true,
+    tooltipDelay: 100
+  },
+  nodes: {
+    font: {
+      color: '""" + GRAPH_LABEL_COLOR + """'
+    }
+  },
+  physics: {
+    enabled: true
+  }
+}
+""")
 
 # --- Сохраняем и отображаем граф ---
 temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
