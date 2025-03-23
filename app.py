@@ -170,8 +170,8 @@ options_dict = {
         "shape": "dot",
         "font": {
             "color": GRAPH_LABEL_COLOR,
-            "face": "arial",
-            "size": 0
+            "face": "inter",
+            "size": 3
         },
         "opacity": 1
     },
