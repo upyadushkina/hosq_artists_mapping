@@ -42,21 +42,6 @@ TYPE_COLORS = {
     "Другое": "#CD5373"
 }
 
-# --- Настройки страницы и логотип ---
-st.set_page_config(page_title="Artist Graph", layout="wide")
-logo_path = "logo.png"
-if logo_path:
-    with open(logo_path, "rb") as f:
-        logo_data = base64.b64encode(f.read()).decode()
-    st.markdown(
-        f"""
-        <div style="position: absolute; top: 0px; right: 10px;">
-            <img src="data:image/png;base64,{logo_data}" width="33">
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
 # --- CSS стилизация ---
 st.markdown(f"""
     <style>
@@ -170,7 +155,8 @@ options_dict = {
     },
     "nodes": {
         "font": {
-            "color": GRAPH_LABEL_COLOR
+            "color": GRAPH_LABEL_COLOR,
+            "size": 0
         }
     },
     "physics": {
