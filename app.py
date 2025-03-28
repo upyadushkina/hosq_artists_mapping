@@ -195,8 +195,6 @@ options_dict = {
             "damping": 0.09,
             "avoidOverlap": 1
         }
-    }
-
     },
     "layout": {
         "randomSeed": 42,                  # делает граф стабильным между перезагрузками
