@@ -14,7 +14,7 @@ SIDEBAR_LABEL_COLOR = "#E8DED3"        # подписи к фильтрам
 SIDEBAR_TAG_TEXT_COLOR = "#E8DED3"     # текст в выбранных тегах
 SIDEBAR_TAG_BG_COLOR = "#6A50FF"       # фон выбранного тега
 BUTTON_BG_COLOR = "#262123"            # фон кнопок
-BUTTON_TEXT_COLOR = "#4C4646"          # текст на кнопках
+BUTTON_TEXT_COLOR = "#E8DED3"          # текст на кнопках
 GRAPH_LABEL_COLOR = "#E8DED3"          # цвет подписей узлов графа
 HEADER_MENU_COLOR = "#262123"          # цвет верхнего меню Streamlit
 
@@ -177,7 +177,7 @@ options_dict = {
     },
     "manipulation": False,
     "physics": {
-        "enabled": True
+        "enabled": False
     },
     "layout": {
         "randomSeed": 42,                  # делает граф стабильным между перезагрузками
