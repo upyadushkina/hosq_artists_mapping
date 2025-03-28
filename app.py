@@ -68,6 +68,15 @@ st.markdown(f"""
         color: {BUTTON_TEXT_COLOR} !important;
         border: none;
     }}
+    /* Название секции фильтров */
+    section[data-testid="stSidebar"] h1 {
+        color: #E8DED3 !important;
+    }
+
+    /* Стрелочка multiselect (выпадающее меню) */
+    .stMultiSelect svg {
+        fill: #E8DED3 !important;
+    }
     header {{
         background-color: {HEADER_MENU_COLOR} !important;
     }}
