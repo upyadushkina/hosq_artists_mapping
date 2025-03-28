@@ -180,13 +180,23 @@ options_dict = {
         "font": {
             "color": GRAPH_LABEL_COLOR,
             "face": "inter",
-            # "size": 0
+            "size": 0
         },
         "opacity": 1
     },
     "manipulation": False,
     "physics": {
         "enabled": False
+        "barnesHut": {
+            "gravitationalConstant": 0,   # меньшее отрицательное значение — большее отталкивание
+            "centralGravity": 0.1,
+            "springLength": 300,               # расстояние между узлами (увеличь до 200–400)
+            "springConstant": 0.01,
+            "damping": 0.09,
+            "avoidOverlap": 1
+  }
+}
+
     },
     "layout": {
         "randomSeed": 42,                  # делает граф стабильным между перезагрузками
