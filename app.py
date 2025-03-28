@@ -186,15 +186,16 @@ options_dict = {
     },
     "manipulation": False,
     "physics": {
-        "enabled": False
-        "barnesHut": {
-            "gravitationalConstant": 0,   # меньшее отрицательное значение — большее отталкивание
-            "centralGravity": 0.1,
-            "springLength": 300,               # расстояние между узлами (увеличь до 200–400)
-            "springConstant": 0.01,
-            "damping": 0.09,
-            "avoidOverlap": 1
-  }
+    "enabled": True,
+    "barnesHut": {
+        "gravitationalConstant": 0,   # меньше отрицательное значение, больше отталкивание
+        "centralGravity": 0.1,
+        "springLength": 300,
+        "springConstant": 0.01,
+        "damping": 0.09,
+        "avoidOverlap": 1
+    }
+}
 }
 
     },
