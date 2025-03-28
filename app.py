@@ -177,6 +177,7 @@ options_dict = {
     },
     "nodes": {
         "shape": "dot",
+        "size": 5,
         "font": {
             "color": GRAPH_LABEL_COLOR,
             "face": "inter",
@@ -186,15 +187,7 @@ options_dict = {
     },
     "manipulation": False,
     "physics": {
-        "enabled": True,
-        "barnesHut": {
-            "gravitationalConstant": 0,   # меньше отрицательное значение, больше отталкивание
-            "centralGravity": 0.1,
-            "springLength": 300,
-            "springConstant": 0.01,
-            "damping": 0.09,
-            "avoidOverlap": 1
-        }
+        "enabled": False
     },
     "layout": {
         "randomSeed": 42,                  # делает граф стабильным между перезагрузками
